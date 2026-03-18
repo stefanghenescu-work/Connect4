@@ -46,27 +46,27 @@ export class Connect4Controller {
 
   public makeMove(column: number): GameStatus | null {
     // validate column
-    if (column < 0 || column >= this.width)
-      return null;
+    if (column < 0 || column >= this.width) return null;
 
     // find lowest row available in the column
     let minRowIndex = -1;
-    
+
     for (let i = this.height - 1; i >= 0; i--) {
-      if (this.board[i][column] == 0) {		// empty space
+      if (this.board[i][column] === 0) {
         minRowIndex = i;
-				break;
-				// I can break because I start searching from bottom
-			}
+        break;
+        // I can break because I start searching from bottom
+      }
     }
 
-		if (minRowIndex === -1) // column is full
-			return null;
-    
-		// place a counter
-		this.board[minRowIndex][column] = this.currentPlayer;
-		
-		console.log("Dropping a token into a column:", column);
+    if (minRowIndex === -1)
+      // column is full
+      return null;
+
+    // place a counter
+    this.board[minRowIndex][column] = this.currentPlayer;
+
+    console.log("Dropping a token into a column:", column);
 
     // change player's turn
     this.changePlayer();
