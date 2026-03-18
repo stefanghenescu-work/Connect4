@@ -46,7 +46,7 @@ export class Connect4Controller {
 
   public makeMove(column: number): GameStatus | null {
     // validate column
-    if (column < 0 || column >= this.width) return null;
+    if (column < 0 || column >= this.width) return this.getStatus();
 
     // find lowest row available in the column
     let minRowIndex = -1;
@@ -61,7 +61,7 @@ export class Connect4Controller {
 
     if (minRowIndex === -1)
       // column is full
-      return null;
+      return this.getStatus();
 
     // place a counter
     this.board[minRowIndex][column] = this.currentPlayer;
