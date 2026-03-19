@@ -25,6 +25,75 @@ export class Connect4Controller {
     return Array.from({ length: this.height }, () => Array(this.width).fill(0));
   }
 
+  private countCountersInDirection(
+    row: number,
+    col: number,
+    dx: number,
+    dy: number,
+    player: Player,
+  ): number {
+    if (row < 0 || row >= this.height || col < 0 || col >= this.width) {
+      return 0;
+    }
+
+    if (this.board[row][col] !== player) {
+      return 0;
+    }
+
+    return (
+      this.countCountersInDirection(row + dx, col + dy, dx, dy, player) + 1
+    );
+  }
+
+  private changeGameState(anyWinner: boolean): void {
+    if (anyWinner) {
+      this.gameState = "won";
+    } else {
+      this.gameState = "draw";
+
+      for (let col = 0; col < this.width; col++) {
+        if (this.board[0][col] === 0) {
+          this.gameState = "ongoing";
+          break;
+        }
+      }
+    }
+  }
+
+  public checkWin(row: number, col: number, player: Player): boolean {
+    const directions = [
+      [0, 1],
+      [1, 0],
+      [1, 1],
+      [1, -1],
+    ];
+
+    for (const [dx, dy] of directions) {
+      let countConnectedCounters = 1;
+
+      countConnectedCounters += this.countCountersInDirection(
+        row + dx,
+        col + dy,
+        dx,
+        dy,
+        player,
+      );
+      countConnectedCounters += this.countCountersInDirection(
+        row - dx,
+        col - dy,
+        -dx,
+        -dy,
+        player,
+      );
+
+      if (countConnectedCounters >= 4) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   public newGame(): GameStatus {
     this.board = this.initializeBoard();
     this.currentPlayer = 1;
@@ -50,7 +119,16 @@ export class Connect4Controller {
 
     console.log("Dropping a token into a column:", column);
 
-    this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
+    const currentPlayerWon = this.checkWin(
+      minRowIndex,
+      column,
+      this.currentPlayer,
+    );
+    this.changeGameState(currentPlayerWon);
+
+    if (!currentPlayerWon) {
+      this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
+    }
 
     return this.getStatus();
   }
