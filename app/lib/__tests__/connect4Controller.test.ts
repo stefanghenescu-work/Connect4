@@ -58,4 +58,74 @@ describe("Connect4Controller", () => {
       expect(statusChangePlayer?.currentPlayer).toBe(1);
     });
   });
+  describe("Win Condition", () => {
+    it("should detect a horizontal win", () => {
+      const controller = new Connect4Controller(4, 4);
+      controller.newGame();
+
+      controller.makeMove(0);
+      controller.makeMove(0);
+      controller.makeMove(1);
+      controller.makeMove(1);
+      controller.makeMove(2);
+      controller.makeMove(2);
+      const status = controller.makeMove(3);
+
+      expect(status).not.toBeNull();
+      expect(status?.state).toBe("won");
+      expect(status?.winner).toBe(1);
+    });
+
+    it("should detect a vertical win", () => {
+      const controller = new Connect4Controller(4, 4);
+      controller.newGame();
+
+      controller.makeMove(0);
+      controller.makeMove(1);
+      controller.makeMove(0);
+      controller.makeMove(1);
+      controller.makeMove(0);
+      controller.makeMove(1);
+      const status = controller.makeMove(0);
+
+      expect(status).not.toBeNull();
+      expect(status?.state).toBe("won");
+      expect(status?.winner).toBe(1);
+    });
+
+    it("should detect a diagonal win", () => {
+      const controller = new Connect4Controller(4, 4);
+      controller.newGame();
+
+      controller.makeMove(0);
+      controller.makeMove(1);
+      controller.makeMove(1);
+      controller.makeMove(2);
+      controller.makeMove(3);
+      controller.makeMove(2);
+      controller.makeMove(2);
+      controller.makeMove(3);
+      controller.makeMove(0);
+      controller.makeMove(3);
+      const status = controller.makeMove(3);
+
+      expect(status).not.toBeNull();
+      expect(status?.state).toBe("won");
+      expect(status?.winner).toBe(1);
+    });
+
+    it("should detect a draw when board is full", () => {
+      const controller = new Connect4Controller(2, 2);
+      controller.newGame();
+
+      controller.makeMove(0);
+      controller.makeMove(1);
+      controller.makeMove(1);
+      const status = controller.makeMove(0);
+
+      expect(status).not.toBeNull();
+      expect(status?.state).toBe("draw");
+      expect(status?.winner).toBeUndefined();
+    });
+  });
 });
