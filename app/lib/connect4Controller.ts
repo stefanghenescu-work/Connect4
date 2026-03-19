@@ -25,18 +25,6 @@ export class Connect4Controller {
     return Array.from({ length: this.height }, () => Array(this.width).fill(0));
   }
 
-  private changePlayer(): void {
-    switch (this.currentPlayer) {
-      case 1:
-        this.currentPlayer = 2;
-        break;
-
-      case 2:
-        this.currentPlayer = 1;
-        break;
-    }
-  }
-
   public newGame(): GameStatus {
     this.board = this.initializeBoard();
     this.currentPlayer = 1;
@@ -45,31 +33,24 @@ export class Connect4Controller {
   }
 
   public makeMove(column: number): GameStatus | null {
-    // validate column
-    if (column < 0 || column >= this.width) return this.getStatus();
+    if (column < 0 || column >= this.width) return null;
 
-    // find lowest row available in the column
     let minRowIndex = -1;
 
-    for (let i = this.height - 1; i >= 0; i--) {
-      if (this.board[i][column] === 0) {
-        minRowIndex = i;
+    for (let rowIndex = this.height - 1; rowIndex >= 0; rowIndex--) {
+      if (this.board[rowIndex][column] === 0) {
+        minRowIndex = rowIndex;
         break;
-        // I can break because I start searching from bottom
       }
     }
 
-    if (minRowIndex === -1)
-      // column is full
-      return this.getStatus();
+    if (minRowIndex === -1) return null;
 
-    // place a counter
     this.board[minRowIndex][column] = this.currentPlayer;
 
     console.log("Dropping a token into a column:", column);
 
-    // change player's turn
-    this.changePlayer();
+    this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
 
     return this.getStatus();
   }
